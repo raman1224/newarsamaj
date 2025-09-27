@@ -1,0 +1,99 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Progress tracking
+  progress  UserProgress[]
+  achievements UserAchievement[]
+  flashcards UserFlashcard[]
+}
+
+model UserProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  completed Boolean  @default(false)
+  score     Int?
+  timeSpent Int? // in seconds
+  createdAt DateTime @default(now())
+}
+
+model Lesson {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  content     Json     // Array of phrases/words
+  order       Int
+  difficulty  String   @default("beginner")
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  progress    UserProgress[]
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  icon        String
+  condition   Json     // Conditions to unlock (e.g., {type: "lessonsCompleted", value: 1})
+  xpReward    Int      @default(10)
+  createdAt   DateTime @default(now())
+  
+  users       UserAchievement[]
+}
+
+model UserAchievement {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievementId  String
+  achievement    Achievement  @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  unlockedAt     DateTime     @default(now())
+}
+
+model Flashcard {
+  id            String   @id @default(cuid())
+  newaWord      String
+  nepaliMeaning String
+  englishMeaning String
+  pronunciation String
+  category      String
+  difficulty    String   @default("easy")
+  createdAt     DateTime @default(now())
+  
+  userFlashcards UserFlashcard[]
+}
+
+model UserFlashcard {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  flashcardId String
+  flashcard   Flashcard @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
+  known       Boolean  @default(false)
+  lastReviewed DateTime?
+  reviewCount Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+
