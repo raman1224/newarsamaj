@@ -47,25 +47,6 @@ interface Temple {
   website?: string
 }
 
-interface ArchitectureStyle {
-  id: string
-  name: string
-  nameNewa: string
-  description: string
-  detailedDescription: string
-  features: string[]
-  examples: string[]
-  period: string
-  image: string
-  characteristics: {
-    roof: string
-    walls: string
-    foundation: string
-    decoration: string
-  }
-  historicalContext: string
-}
-
 const temples: Temple[] = [
   {
   // Your existing first 3 temples...
@@ -2133,6 +2114,25 @@ image: "/indra kamala.jpeg",
     accessibility: "Fully wheelchair accessible"
   }
 ]
+interface ArchitectureStyle {
+  id: string
+  name: string
+  nameNewa: string
+  description: string
+  detailedDescription: string
+  features: string[]
+  examples: string[]
+  period: string
+  image: string
+  characteristics: {
+    roof: string
+    walls: string
+    foundation: string
+    decoration: string
+  }
+  historicalContext: string
+}
+
 const architectureStyles: ArchitectureStyle[] = [
   {
     id: "pagoda",

@@ -1126,7 +1126,7 @@ const translations: TranslationData = {
 
 
   "temples": {
-
+  templeList: "Temple List",
 
     "search": {
       "placeholder": "Search temples by name, location, or significance..."
@@ -1203,6 +1203,7 @@ const translations: TranslationData = {
       "kathmandu": "Kathmandu Valley",
       "samajBuilding": "Samaj Building, Bhattathok",
     },
+    "scrollToExplore": "Scroll To Explore",
     "explore": "Explore",
     "learnMore": "Learn More",
     "viewAll": "View All",
@@ -2351,7 +2352,7 @@ const translations: TranslationData = {
       "leadership": "Leadership",
       "culture": "Culture"
     },
-
+rights: "Rights",
     "quickLinks": "Quick Links",
     "aboutUs": "About Us",
     "connect": "Connect With Us",
@@ -5462,8 +5463,6 @@ values: {
   },
 
 
-
-
 leadershipPage: {
     title: "नेवार समाज याः नेतृत्व आ पुक्हु",
     subtitle: "हामः पँचः, हामः परम्परा, आ हामः १००० बलियो एकजाः नेवार पुक्हु मनाम्हा।",
@@ -5642,30 +5641,46 @@ leadershipPage: {
 
 culture: {
   
+
     "architecture": "वास्तुकला",
-    "architectureDesc": "पुलांगु पगोडा-शैलीका चैत्य, चूक गुंकि जटिल सिं कार्की",
-    "art": "कला गुंकि शिल्प",
-    "artDesc": "ल्हाकू चित्रकला, मूर्तिकला, धातुकाम गुंकि हस्तशिल्प",
-    "festivals": "चहड",
-    "festivalsDesc": "अनौठा रीतिरिवाजत संग वर्षैभरि रंगीन चहडत",
-    "cuisine": "खाना पान",
-    "cuisineDesc": "विविध स्वाद गुंकि खानात संग अनौठा पाकपद्धति",
+    "architectureDesc": "पुरातन पगोडा शैलीका मन्दिर, आँगन र जटिल काठको नक्काशी",
+    "art": "कला र शिल्प",
+    "artDesc": "परम्परागत चित्रकला, मूर्तिकला, धातुकर्म र हस्तशिल्प",
+    "festivals": "चाडपर्व",
+    "festivalsDesc": "वर्षभरि रंगीन चाडपर्वहरू र अद्वितीय रीतिरिवाज",
+    "cuisine": "पाकशैली",
+    "cuisineDesc": "विविध स्वाद र खानाहरू भएको अद्वितीय पाकपरम्परा",
 
+    "title": "नेवार संस्कृति र विरासत",
+    "description": "नेवार समुदायको समृद्ध सांस्कृतिक तानाबानामा डुब्नुहोस्। सयौं वर्षदेखि हाम्रो पहिचानलाई आकार दिएका प्राचीन मन्दिरहरू, जीवन्त चाडपर्वहरू, परम्परागत कलाहरू र कालजयी प्रथाहरू अन्वेषण गर्नुहोस्।",
+    "stats": {
+      "temples": "पवित्र मन्दिरहरू",
+      "festivals": "वार्षिक चाडपर्वहरू",
+      "artForms": "कलाका प्रकारहरू",
+      "heritageYears": "विरासतका वर्षहरू"
+    },
+    "tabs": {
+      "temples": "मन्दिर र विरासत",
+      "festivals": "चाडपर्वहरू",
+      "practices": "सांस्कृतिक प्रथाहरू"
+    },
+    "cta": {
+      "title": "हाम्रो विरासत सँगै संरक्षण गरौं",
+      "description": "नेवार संस्कृतिको सुन्दर परम्पराहरू संरक्षण र साझा गर्न हाम्रो समुदायमा सामेल हुनुहोस्। तपाईं आफ्नो विरासतबारे सिकिरहनुभएको छ वा पहिलो पटक खोजिरहनुभएको छ, हरेक योगदानले हाम्रो संस्कृतिलाई जिउँदो राख्न मद्दत गर्छ।",
+      "joinCommunity": "हाम्रो समुदायमा सामेल हुनुहोस्",
+      "learnMore": "थप जान्नुहोस्"
+    },
 
-
-title: "नेवाः संस्कृति तः जाति",
-description: "नेवाः समृद्ध सांस्कृतिक तानाबानाय् डुबेढु...",
-tabs: {
-temples: "द्यः तः जाति",
-festivals: "चह्रे",
-practices: "सांस्कृतिक परम्परा"
-},
-cta: {
-title: "जुजुः जाति लसकु",
-description: "जुजुः जाति लसकाय् ल्हासेढु...",
-join: "जुजुः समुदायय् ल्हासेढु",
-learn: "मल्ले वनेढु"
-}
+    "temples": {
+      "title": "नेपालका पवित्र मन्दिरहरू",
+      "subtitle": "आध्यात्मिक विरासत र वास्तुकलाका अज्चर्यहरू खोज्नुहोस्",
+      "description": "नेपालका मन्दिरहरू केवल पूजास्थल मात्र होइनन् तर कला, संस्कृति र इतिहासका जीवन्त संग्रहालयहरू हुन् जो समयको परीक्षामा उभिएका छन्।",
+      "architecture": "वास्तुकला",
+      "established": "स्थापना भएको",
+      "heritageTitle": "हाम्रो विरासत सँगै संरक्षण गरौं",
+      "heritageDescription": "नेवार संस्कृति र नेपाली विरासतका सुन्दर परम्पराहरू संरक्षण र साझा गर्न हाम्रो समुदायमा सामेल हुनुहोस्।",
+      "exploreMore": "थप मन्दिरहरू अन्वेषण गर्नुहोस्"
+  },
 },
 temples: {
 title: "द्यः तः जाति ल्हाके",

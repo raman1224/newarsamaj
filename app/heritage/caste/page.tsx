@@ -1551,6 +1551,22 @@ function Caste() {
           </p>
         </div>
 
+<div className="mb-6 max-w-sm  w-128 mx-auto bg-white shadow-md rounded-lg p-6 border border-gray-200">
+  <h3 id="pdf-title" className="text-xl font-semibold text-gray-800 mb-2">
+    Comprehensive Guide to All Nepal Castes
+  </h3>
+
+  <div id="pdf-description" className="text-gray-700 mb-4">
+    Detailed population, location, and cultural info for all Nepal & Newa castes.
+  </div>
+  <a id="pdf-link" href="/caste.pdf" download>
+    <button className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md transition-colors duration-200">
+      Download PDF
+    </button>
+  </a>
+</div>
+
+
         {/* Statistics Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 transition-all duration-300 hover:scale-105 shadow-lg border-l-4 border-amber-500">
