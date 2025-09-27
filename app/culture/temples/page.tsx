@@ -3253,7 +3253,7 @@ image: "/indra kamala.jpeg",
 
 ]
 
-export function TempleModal({ temple, onClose }: { temple: Temple; onClose: () => void }) {
+function TempleModal({ temple, onClose }: { temple: Temple; onClose: () => void }) {
   const [activeImage, setActiveImage] = React.useState(0)
   const [activeTab, setActiveTab] = React.useState("overview")
   const { t } = useTranslation()
