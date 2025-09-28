@@ -8,10 +8,27 @@ export interface Achievement {
   xpReward: number;
   unlockDate: string | null;
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
-  condition: () => boolean;
+  // Remove the 'condition' function from the interface
 }
 
-export const ACHIEVEMENTS: Achievement[] = [
+// Define the condition functions separately, keyed by achievement ID.
+const achievementConditions: { [key: number]: () => boolean } = {
+  1: () => {
+    // Safely check for localStorage in the condition function itself
+    if (typeof window === 'undefined') return false;
+    const completedLessons = JSON.parse(localStorage.getItem('completed-lessons') || '[]');
+    return completedLessons.length >= 1;
+  },
+  2: () => {
+    if (typeof window === 'undefined') return false;
+    const userStats = JSON.parse(localStorage.getItem('user-stats') || '{}');
+    return userStats.wordsLearned >= 100;
+  },
+  // ... add conditions for other achievements
+};
+
+// Your base achievements data does not include the condition function.
+export const ACHIEVEMENTS_DATA: Omit<Achievement, 'condition'>[] = [
   {
     id: 1,
     icon: 'Trophy',
@@ -21,10 +38,7 @@ export const ACHIEVEMENTS: Achievement[] = [
     xpReward: 50,
     unlockDate: null,
     rarity: "common",
-    condition: () => {
-      const completedLessons = JSON.parse(localStorage.getItem('completed-lessons') || '[]');
-      return completedLessons.length >= 1;
-    }
+    // condition is not defined here
   },
   {
     id: 2,
@@ -35,19 +49,25 @@ export const ACHIEVEMENTS: Achievement[] = [
     xpReward: 100,
     unlockDate: null,
     rarity: "rare",
-    condition: () => {
-      const userStats = JSON.parse(localStorage.getItem('user-stats') || '{}');
-      return userStats.wordsLearned >= 100;
-    }
   },
-  // Add more achievements...
+  // ... other achievements
 ];
 
 export const checkAchievements = (): Achievement[] => {
-  const achievements = JSON.parse(localStorage.getItem('achievements') || JSON.stringify(ACHIEVEMENTS));
+  // 1. Always use the base data structure from ACHIEVEMENTS_DATA
+  const storedAchievements = JSON.parse(localStorage.getItem('achievements') || '[]');
   
-  const updatedAchievements = achievements.map((achievement: Achievement) => {
-    if (!achievement.unlocked && achievement.condition()) {
+  // 2. Merge stored unlock status with base data, ensuring all fields are present.
+  const achievements: Achievement[] = ACHIEVEMENTS_DATA.map(baseAchievement => {
+    const stored = storedAchievements.find((a: Achievement) => a.id === baseAchievement.id);
+    return { ...baseAchievement, ...stored }; // Stored data (like `unlocked`) overrides base data.
+  });
+
+  // 3. Check conditions and update achievements.
+  const updatedAchievements = achievements.map((achievement) => {
+    const conditionFn = achievementConditions[achievement.id];
+    // Check if the condition exists and if the achievement is not already unlocked.
+    if (!achievement.unlocked && conditionFn && conditionFn()) {
       return {
         ...achievement,
         unlocked: true,
@@ -56,19 +76,30 @@ export const checkAchievements = (): Achievement[] => {
     }
     return achievement;
   });
-  
+
+  // 4. Save only the data that can be serialized (no functions).
   localStorage.setItem('achievements', JSON.stringify(updatedAchievements));
   return updatedAchievements;
 };
 
+// getUnlockedAchievements and getTotalXP functions remain largely the same,
+// but ensure they also use the merging logic if you are using ACHIEVEMENTS_DATA as the base.
 export const getUnlockedAchievements = (): Achievement[] => {
-  const achievements = JSON.parse(localStorage.getItem('achievements') || JSON.stringify(ACHIEVEMENTS));
-  return achievements.filter((a: Achievement) => a.unlocked);
+  const storedAchievements = JSON.parse(localStorage.getItem('achievements') || '[]');
+  const achievements = ACHIEVEMENTS_DATA.map(base => {
+    const stored = storedAchievements.find((a: Achievement) => a.id === base.id);
+    return { ...base, ...stored };
+  });
+  return achievements.filter((a) => a.unlocked);
 };
 
 export const getTotalXP = (): number => {
-  const achievements = JSON.parse(localStorage.getItem('achievements') || JSON.stringify(ACHIEVEMENTS));
+  const storedAchievements = JSON.parse(localStorage.getItem('achievements') || '[]');
+  const achievements = ACHIEVEMENTS_DATA.map(base => {
+    const stored = storedAchievements.find((a: Achievement) => a.id === base.id);
+    return { ...base, ...stored };
+  });
   return achievements
-    .filter((a: Achievement) => a.unlocked)
-    .reduce((sum: number, achievement: Achievement) => sum + achievement.xpReward, 0);
+    .filter((a) => a.unlocked)
+    .reduce((sum, achievement) => sum + achievement.xpReward, 0);
 };

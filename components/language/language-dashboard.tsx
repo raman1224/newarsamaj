@@ -683,15 +683,15 @@ export function LanguageDashboard() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="lessons" value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 glass border-0 p-1">
+          <TabsList className="gap-16  grid w-full grid-cols-4 glass border-0 p-1">
             <TabsTrigger value="lessons" className="flex items-center gap-2 data-[state=active]:bg-background">
               <BookOpen className="h-4 w-4" />
               {t('dashboard.lessons')}
             </TabsTrigger>
-            <TabsTrigger value="flashcards" className="flex items-center gap-2 data-[state=active]:bg-background">
+            {/* <TabsTrigger value="flashcards" className="flex items-center gap-2 data-[state=active]:bg-background">
               <BookText className="h-4 w-4" />
               Flashcards
-            </TabsTrigger>
+            </TabsTrigger> */}
             <TabsTrigger value="chatroom" className="flex items-center gap-2 data-[state=active]:bg-background">
               <MessageCircle className="h-4 w-4" />
               Chatroom
