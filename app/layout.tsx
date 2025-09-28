@@ -4,7 +4,6 @@ import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 import { LanguageProvider } from '@/context/LanguageContext'
-import { AuthProvider } from '@/context/AuthContext'
 export const metadata: Metadata = {
   title: 'Newar Samaj',
   description: 'Preserving and promoting Newar culture and language',
@@ -27,12 +26,10 @@ html {
         `}</style>
       </head>
       <body>
-                <AuthProvider>
 
         <LanguageProvider>
           {children}
         </LanguageProvider>
-                </AuthProvider>
 
       </body>
     </html>

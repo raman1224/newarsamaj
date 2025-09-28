@@ -47,7 +47,7 @@ const sampleCards: FlashcardData[] = [
   // Add more flashcards...
 ];
 
-export function FlashcardSystem() {
+  function FlashcardSystem() {
   const { t } = useTranslation()
   const [currentCardIndex, setCurrentCardIndex] = React.useState(0)
   const [isFlipped, setIsFlipped] = React.useState(false)
@@ -100,7 +100,8 @@ export function FlashcardSystem() {
     if (isCorrect) {
       setCorrectAnswers((prev) => prev + 1)
       
-      // Update user stats
+     // Safe localStorage usage
+    if (typeof window !== 'undefined') {
       const userStats = JSON.parse(localStorage.getItem('user-stats') || '{}');
       const updatedStats = {
         ...userStats,
@@ -109,6 +110,7 @@ export function FlashcardSystem() {
       };
       localStorage.setItem('user-stats', JSON.stringify(updatedStats));
     }
+  }
 
     // Move to next card after a short delay
     setTimeout(() => {
@@ -233,9 +235,9 @@ export function FlashcardSystem() {
         <div className="max-w-2xl mx-auto">
           <div className="perspective-1000 mb-8">
             <div
-              className={`relative w-full h-96 transition-transform duration-700 transform-style-preserve-3d cursor-pointer ${
-                isFlipped ? "rotate-y-180" : ""
-              }`}
+             className={`relative w-full h-96 transition-transform duration-700 cursor-pointer ${
+  isFlipped ? "rotate-y-180" : ""
+}`}
               onClick={handleCardFlip}
             >
               {/* Front of card */}
@@ -349,3 +351,5 @@ export function FlashcardSystem() {
     </PageLayout>
   )
 }
+
+export default FlashcardSystem;
