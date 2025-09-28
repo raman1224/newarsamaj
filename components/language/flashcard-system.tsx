@@ -1,28 +1,28 @@
 // components/language/flashcard-system.tsx
-"use client"
-import PageLayout from '@/components/layout/page-layout'
-import * as React from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Volume2, RotateCcw, Check, X, Brain, ArrowRight, ChevronLeft, ChevronRight, Shuffle, Home } from "lucide-react"
-import { useTranslation } from '@/hooks/useTranslation'
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
+"use client";
+
+import PageLayout from '@/components/layout/page-layout';
+import * as React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Volume2, RotateCcw, Check, X, Brain, ChevronLeft, ChevronRight, Shuffle, Home } from "lucide-react";
+import { useTranslation } from '@/hooks/useTranslation';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 interface FlashcardData {
-  id: number
-  newaWord: string
-  nepaliMeaning: string
-  englishMeaning: string
-  pronunciation: string
-  category: string
-  difficulty: "easy" | "medium" | "hard"
-  exampleSentence?: string
+  id: number;
+  newaWord: string;
+  nepaliMeaning: string;
+  englishMeaning: string;
+  pronunciation: string;
+  category: string;
+  difficulty: "easy" | "medium" | "hard";
+  exampleSentence?: string;
 }
 
-// Enhanced flashcards data with example sentences
 const sampleCards: FlashcardData[] = [
   {
     id: 1,
@@ -43,119 +43,111 @@ const sampleCards: FlashcardData[] = [
     category: "Family & Home",
     difficulty: "easy",
     exampleSentence: "मेरो छेँ यहाँ छ। (My house is here.)"
-  },
-  // Add more flashcards...
+  }
 ];
 
-  function FlashcardSystem() {
-  const { t } = useTranslation()
-  const [currentCardIndex, setCurrentCardIndex] = React.useState(0)
-  const [isFlipped, setIsFlipped] = React.useState(false)
-  const [showTranslation, setShowTranslation] = React.useState(false)
-  const [correctAnswers, setCorrectAnswers] = React.useState(0)
-  const [totalAnswered, setTotalAnswered] = React.useState(0)
-  const [isDarkMode, setIsDarkMode] = React.useState(false)
-  const [cards, setCards] = React.useState<FlashcardData[]>(sampleCards)
-  const [isShuffled, setIsShuffled] = React.useState(false)
+export default function FlashcardSystem() {
+  const { t } = useTranslation();
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [showTranslation, setShowTranslation] = useState(false);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [totalAnswered, setTotalAnswered] = useState(0);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [cards, setCards] = useState<FlashcardData[]>(sampleCards);
+  const [isShuffled, setIsShuffled] = useState(false);
 
-  const currentCard = cards[currentCardIndex]
-  const progress = ((currentCardIndex + 1) / cards.length) * 100
+  const currentCard = cards[currentCardIndex];
+  const progress = ((currentCardIndex + 1) / cards.length) * 100;
 
   const handleThemeToggle = () => {
-    setIsDarkMode(!isDarkMode)
-    document.documentElement.classList.toggle("dark")
-  }
+    setIsDarkMode(!isDarkMode);
+    document.documentElement.classList.toggle("dark");
+  };
 
   const playPronunciation = (text: string) => {
     if ("speechSynthesis" in window) {
-      speechSynthesis.cancel(); // Stop any ongoing speech
-      
+      speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "ne-NP"; // Nepali as closest to Newar
+      utterance.lang = "ne-NP";
       utterance.rate = 0.8;
-      
-      // Try to find a Nepali voice
       const voices = speechSynthesis.getVoices();
       const nepaliVoice = voices.find(voice => 
         voice.lang === 'ne-NP' || voice.lang.startsWith('ne-')
       );
-      
       if (nepaliVoice) {
         utterance.voice = nepaliVoice;
       }
-      
       speechSynthesis.speak(utterance);
     }
-  }
+  };
 
   const handleCardFlip = () => {
-    setIsFlipped(!isFlipped)
+    setIsFlipped(!isFlipped);
     if (!showTranslation) {
-      setShowTranslation(true)
+      setShowTranslation(true);
     }
-  }
+  };
 
   const handleAnswer = (isCorrect: boolean) => {
-    setTotalAnswered((prev) => prev + 1)
+    setTotalAnswered((prev) => prev + 1);
     if (isCorrect) {
-      setCorrectAnswers((prev) => prev + 1)
+      setCorrectAnswers((prev) => prev + 1);
       
-     // Safe localStorage usage
-    if (typeof window !== 'undefined') {
-      const userStats = JSON.parse(localStorage.getItem('user-stats') || '{}');
-      const updatedStats = {
-        ...userStats,
-        wordsLearned: (userStats.wordsLearned || 0) + 1,
-        xp: (userStats.xp || 0) + 5
-      };
-      localStorage.setItem('user-stats', JSON.stringify(updatedStats));
+      if (typeof window !== 'undefined') {
+        const userStats = JSON.parse(localStorage.getItem('user-stats') || '{}');
+        const updatedStats = {
+          ...userStats,
+          wordsLearned: (userStats.wordsLearned || 0) + 1,
+          xp: (userStats.xp || 0) + 5
+        };
+        localStorage.setItem('user-stats', JSON.stringify(updatedStats));
+      }
     }
-  }
 
-    // Move to next card after a short delay
     setTimeout(() => {
       if (currentCardIndex < cards.length - 1) {
-        setCurrentCardIndex((prev) => prev + 1)
-        setIsFlipped(false)
-        setShowTranslation(false)
+        setCurrentCardIndex((prev) => prev + 1);
+        setIsFlipped(false);
+        setShowTranslation(false);
       }
-    }, 1000)
-  }
+    }, 1000);
+  };
 
   const resetSession = () => {
-    setCurrentCardIndex(0)
-    setIsFlipped(false)
-    setShowTranslation(false)
-    setCorrectAnswers(0)
-    setTotalAnswered(0)
-  }
+    setCurrentCardIndex(0);
+    setIsFlipped(false);
+    setShowTranslation(false);
+    setCorrectAnswers(0);
+    setTotalAnswered(0);
+  };
 
   const shuffleCards = () => {
-    const shuffled = [...cards].sort(() => Math.random() - 0.5)
-    setCards(shuffled)
-    setIsShuffled(true)
-    resetSession()
-  }
+    const shuffled = [...cards].sort(() => Math.random() - 0.5);
+    setCards(shuffled);
+    setIsShuffled(true);
+    resetSession();
+  };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "easy":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
       case "medium":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
       case "hard":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
       default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
     }
-  }
+  };
 
-  // Check and update achievements
   useEffect(() => {
-    // Import and check achievements
-    import('@/utils/achievements').then(({ checkAchievements }) => {
-      checkAchievements();
-    });
+    if (typeof window !== 'undefined') {
+      import('@/utils/achievements').then(({ checkAchievements }) => {
+        checkAchievements();
+      });
+    }
   }, [correctAnswers, totalAnswered]);
 
   if (currentCardIndex >= cards.length) {
@@ -185,10 +177,6 @@ const sampleCards: FlashcardData[] = [
                 <RotateCcw className="mr-2 h-5 w-5" />
                 Practice Again
               </Button>
-              <Button variant="outline" size="lg">
-                <Brain className="mr-2 h-5 w-5" />
-                AI Review
-              </Button>
               <Link href="/language/learn">
                 <Button variant="outline" size="lg">
                   <Home className="mr-2 h-5 w-5" />
@@ -199,7 +187,7 @@ const sampleCards: FlashcardData[] = [
           </div>
         </div>
       </PageLayout>
-    )
+    );
   }
 
   return (
@@ -233,28 +221,30 @@ const sampleCards: FlashcardData[] = [
 
         {/* Flashcard */}
         <div className="max-w-2xl mx-auto">
-          <div className="perspective-1000 mb-8">
+          <div className="mb-8">
             <div
-             className={`relative w-full h-96 transition-transform duration-700 cursor-pointer ${
-  isFlipped ? "rotate-y-180" : ""
-}`}
+              className={`relative w-full h-96 transition-all duration-500 cursor-pointer ${
+                isFlipped ? "transform rotate-y-180" : ""
+              }`}
               onClick={handleCardFlip}
             >
               {/* Front of card */}
-              <Card className="absolute inset-0 backface-hidden shadow-2xl hover:shadow-3xl transition-shadow glass border-0">
+              <Card className={`absolute inset-0 shadow-2xl border-0 ${
+                isFlipped ? "opacity-0" : "opacity-100"
+              } transition-opacity duration-300`}>
                 <CardContent className="h-full flex flex-col items-center justify-center p-8 text-center">
                   <Badge className={`mb-4 ${getDifficultyColor(currentCard.difficulty)}`}>
                     {currentCard.category} • {currentCard.difficulty}
                   </Badge>
 
-                  <div className="text-6xl font-bold mb-6 font-devanagari">{currentCard.newaWord}</div>
+                  <div className="text-6xl font-bold mb-6">{currentCard.newaWord}</div>
 
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={(e) => {
-                      e.stopPropagation()
-                      playPronunciation(currentCard.newaWord)
+                      e.stopPropagation();
+                      playPronunciation(currentCard.newaWord);
                     }}
                     className="mb-4"
                   >
@@ -263,18 +253,19 @@ const sampleCards: FlashcardData[] = [
                   </Button>
 
                   <p className="text-muted-foreground text-sm">/{currentCard.pronunciation}/</p>
-
                   <div className="mt-8 text-muted-foreground">Click to reveal meaning</div>
                 </CardContent>
               </Card>
 
               {/* Back of card */}
-              <Card className="absolute inset-0 backface-hidden rotate-y-180 shadow-2xl glass border-0">
+              <Card className={`absolute inset-0 shadow-2xl border-0 ${
+                isFlipped ? "opacity-100" : "opacity-0"
+              } transition-opacity duration-300`}>
                 <CardContent className="h-full flex flex-col items-center justify-center p-8 text-center">
                   <div className="space-y-6 w-full">
                     <div className="p-4 bg-primary/5 rounded-lg">
                       <p className="text-sm text-muted-foreground mb-2">Nepali Meaning</p>
-                      <p className="text-2xl font-semibold font-devanagari">{currentCard.nepaliMeaning}</p>
+                      <p className="text-2xl font-semibold">{currentCard.nepaliMeaning}</p>
                     </div>
 
                     <div className="p-4 bg-accent/5 rounded-lg">
@@ -285,7 +276,7 @@ const sampleCards: FlashcardData[] = [
                     {currentCard.exampleSentence && (
                       <div className="p-4 bg-muted/5 rounded-lg">
                         <p className="text-sm text-muted-foreground mb-2">Example Sentence</p>
-                        <p className="text-sm font-devanagari">{currentCard.exampleSentence}</p>
+                        <p className="text-sm">{currentCard.exampleSentence}</p>
                       </div>
                     )}
                   </div>
@@ -349,7 +340,5 @@ const sampleCards: FlashcardData[] = [
         </div>
       </div>
     </PageLayout>
-  )
+  );
 }
-
-export default FlashcardSystem;
