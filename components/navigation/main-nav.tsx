@@ -17,6 +17,8 @@ import { CustomDropdown } from "@/components/ui/custom-dropdown"
 import { CustomDropdownItem } from "@/components/ui/custom-dropdown-item"
 import { cn } from "@/lib/utils"
 
+
+
 // Data arrays (keep your existing ones)
 const aboutItems = [
   { title: "Our History", href: "/about/history", description: "Interactive timeline, videos, images, AI chatbot Q&A", key: "nav.aboutItems.our_history", descKey: "nav.aboutItemsDesc.our_history" },
