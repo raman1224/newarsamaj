@@ -1,16 +1,15 @@
 "use client"
 import PageLayout from '@/components/layout/page-layout'
-// import { TempleModal } from './temples/page'
-// import { EnhancedTemplesSection } from "@/components/culture/enhanced-temples-section"
 import { EnhancedFestivalsSection } from "@/components/culture/enhanced-festivals-section"
 import { CulturalPractices } from "@/components/culture/cultural-practices"
+import { TemplesGallery } from '@/components/culture/temples-gallery'
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { MapPin, Calendar, Palette, BookOpen, Users, Heart, Landmark, Sparkles, Drum, ArrowRight } from "lucide-react"
 import { useTranslation } from '@/hooks/useTranslation'
 import Link from "next/link"
-import { TemplesGallery } from '@/components/culture/temples-gallery'
 
 export default function CulturePage() {
   const { t } = useTranslation()

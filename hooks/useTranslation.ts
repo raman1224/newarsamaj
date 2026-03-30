@@ -8,9 +8,6 @@ interface TranslationData {
   [key: string]: any;
 }
 
-
-
-
 const translations: TranslationData = {
   en:  {
 
@@ -4584,9 +4581,6 @@ rights: "Rights",
       },
       
 },
-
-
-
   
   "new": {
      "nav": {

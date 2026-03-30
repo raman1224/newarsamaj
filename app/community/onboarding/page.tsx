@@ -1,8 +1,10 @@
+// app/community/onboarding/page.tsx
 'use client'
 
 import React, { useState, useEffect } from 'react';
 import PageLayout from '@/components/layout/page-layout';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/lib/useUser';
 import { 
   User, 
   MapPin, 
@@ -15,9 +17,17 @@ import {
 
 export default function CommunityOnboarding() {
   const router = useRouter();
+  const { user, loading: userLoading } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Redirect if user is not logged in
+  useEffect(() => {
+    if (!userLoading && !user) {
+      router.push('/auth/login');
+    }
+  }, [user, userLoading, router]);
 
   const handleThemeToggle = () => {
     setIsDarkMode(!isDarkMode);
@@ -51,12 +61,13 @@ export default function CommunityOnboarding() {
     e.preventDefault();
     setIsLoading(true);
     
-    // Save profile data to localStorage or context
+    // Save profile data to localStorage
     localStorage.setItem('userProfile', JSON.stringify(profileData));
     
     // Simulate API call to save profile data
     setTimeout(() => {
       setIsLoading(false);
+      // Redirect to community page instead of home
       router.push('/community');
     }, 1000);
   };
@@ -69,10 +80,29 @@ export default function CommunityOnboarding() {
     }
   }, []);
 
+  // Show loading while checking auth
+  if (userLoading) {
+    return (
+      <PageLayout isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle}>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:bg-gray-900">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-300">Loading...</p>
+          </div>
+        </div>
+      </PageLayout>
+    )
+  }
+
+  // Don't show onboarding if user is not logged in
+  if (!user) {
+    return null;
+  }
+
   const renderStep1 = () => (
     <div className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Full Name *
         </label>
         <div className="relative">
@@ -82,14 +112,14 @@ export default function CommunityOnboarding() {
             required
             value={profileData.fullName}
             onChange={(e) => setProfileData({...profileData, fullName: e.target.value})}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             placeholder="Enter your full name"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Location
         </label>
         <div className="relative">
@@ -98,14 +128,14 @@ export default function CommunityOnboarding() {
             type="text"
             value={profileData.location}
             onChange={(e) => setProfileData({...profileData, location: e.target.value})}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             placeholder="Where are you based?"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Date of Birth
         </label>
         <div className="relative">
@@ -114,7 +144,7 @@ export default function CommunityOnboarding() {
             type="date"
             value={profileData.dateOfBirth}
             onChange={(e) => setProfileData({...profileData, dateOfBirth: e.target.value})}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
           />
         </div>
       </div>
@@ -124,7 +154,7 @@ export default function CommunityOnboarding() {
   const renderStep2 = () => (
     <div className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-4">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
           What are you interested in? (Select all that apply)
         </label>
         <div className="grid grid-cols-2 gap-3">
@@ -135,8 +165,8 @@ export default function CommunityOnboarding() {
               onClick={() => handleInterestToggle(interest)}
               className={`p-3 rounded-lg border-2 text-left transition-all ${
                 profileData.interests.includes(interest)
-                  ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+                  : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
               }`}
             >
               <div className="flex items-center gap-2">
@@ -151,14 +181,14 @@ export default function CommunityOnboarding() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Tell us about yourself
         </label>
         <textarea
           value={profileData.bio}
           onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
           rows={4}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
           placeholder="Share something about yourself with the community..."
         />
       </div>
@@ -167,7 +197,7 @@ export default function CommunityOnboarding() {
 
   return (
     <PageLayout isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle}>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:bg-gray-900 py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             {/* Progress Bar */}
@@ -175,7 +205,7 @@ export default function CommunityOnboarding() {
               <div className="flex items-center justify-between mb-4">
                 <div className={`flex items-center gap-2 ${currentStep >= 1 ? 'text-blue-600' : 'text-gray-400'}`}>
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    currentStep >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-200'
+                    currentStep >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700'
                   }`}>
                     1
                   </div>
@@ -183,14 +213,14 @@ export default function CommunityOnboarding() {
                 </div>
                 <div className={`flex items-center gap-2 ${currentStep >= 2 ? 'text-blue-600' : 'text-gray-400'}`}>
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    currentStep >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-200'
+                    currentStep >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700'
                   }`}>
                     2
                   </div>
                   <span className="text-sm font-medium">Interests</span>
                 </div>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div 
                   className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${(currentStep / 2) * 100}%` }}
@@ -199,15 +229,15 @@ export default function CommunityOnboarding() {
             </div>
 
             {/* Form */}
-            <div className="bg-white rounded-2xl shadow-xl p-8">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
               <div className="text-center mb-8">
                 <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Heart className="h-8 w-8 text-white" />
                 </div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                   Complete Your Profile
                 </h1>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-300">
                   Help us personalize your community experience
                 </p>
               </div>
@@ -220,7 +250,7 @@ export default function CommunityOnboarding() {
                     <button
                       type="button"
                       onClick={() => setCurrentStep(1)}
-                      className="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium"
+                      className="px-6 py-3 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 font-medium"
                     >
                       Back
                     </button>

@@ -1,10 +1,17 @@
+// app/auth/login/page.tsx
 'use client'
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Mail, Lock, LogIn, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react'
-
+import { signIn } from '@/lib/auth'
+import { googleSignIn } from '@/lib/auth'
+import { useUser } from '@/lib/useUser'
+import PageLayout from '@/components/layout/page-layout'
 export default function LoginPage() {
+  const router = useRouter()
+  const { user, loading: userLoading } = useUser()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -13,6 +20,13 @@ export default function LoginPage() {
   const [resetSent, setResetSent] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
   
+  // Redirect if user is already logged in
+  React.useEffect(() => {
+    if (user && !userLoading) {
+      router.push('/community')
+    }
+  }, [user, userLoading, router])
+
   const handleThemeToggle = () => {
     setIsDarkMode(!isDarkMode)
     document.documentElement.classList.toggle("dark")
@@ -30,30 +44,50 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      console.log('Login data:', formData)
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      // Firebase login
+      const userCredential = await signIn(formData.email, formData.password)
+      console.log('User signed in:', userCredential.user)
+      
       // Redirect after successful login
-      window.location.href = '/community'
+      router.push('/community')
     } catch (error: any) {
-      setError(error.message || 'Login failed. Please check your credentials.')
+      console.error('Login error:', error)
+      
+      // Handle specific Firebase auth errors
+      if (error.code === 'auth/invalid-credential') {
+        setError('Invalid email or password. Please try again.')
+      } else if (error.code === 'auth/user-not-found') {
+        setError('No account found with this email.')
+      } else if (error.code === 'auth/wrong-password') {
+        setError('Incorrect password. Please try again.')
+      } else if (error.code === 'auth/too-many-requests') {
+        setError('Too many failed attempts. Please try again later.')
+      } else {
+        setError(error.message || 'Login failed. Please check your credentials.')
+      }
     } finally {
       setIsLoading(false)
     }
   }
 
   const handleGoogleLogin = async () => {
-    try {
-      console.log('Google login initiated')
-      // Add your Google authentication logic here
-    } catch (error: any) {
-      setError(error.message || 'Google login failed')
-    }
+  try {
+    setIsLoading(true)
+    const result = await googleSignIn()
+    console.log("Google User:", result.user)
+    router.push('/community')
+  } catch (error: any) {
+    console.log(error)
+    setError(error.message || "Google login failed")
+  } finally {
+    setIsLoading(false)
   }
+}
+
 
   const handleFacebookLogin = async () => {
     try {
-      console.log('Facebook login initiated')
+      setError('Facebook login coming soon!')
       // Add your Facebook authentication logic here
     } catch (error: any) {
       setError(error.message || 'Facebook login failed')
@@ -66,12 +100,50 @@ export default function LoginPage() {
     
     try {
       console.log('Password reset requested for:', resetEmail)
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Add Firebase password reset logic here
+      // await sendPasswordResetEmail(auth, resetEmail)
       setResetSent(true)
     } catch (error: any) {
       setError(error.message || 'Password reset failed')
     }
+  }
+
+  // Show loading while checking auth state
+  if (userLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Don't show login form if user is already logged in
+  if (user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+            <LogIn className="h-8 w-8 text-green-600 dark:text-green-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            Welcome Back!
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
+            You are already signed in.
+          </p>
+          <Link 
+            href="/community"
+            className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Go to Community
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   if (showResetForm) {
@@ -156,6 +228,8 @@ export default function LoginPage() {
   }
 
   return (
+        <PageLayout isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle}>
+    
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12">
       <div className="max-w-md w-full mx-4">
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
@@ -306,5 +380,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    </PageLayout>
   )
 }
